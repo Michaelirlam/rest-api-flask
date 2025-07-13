@@ -6,7 +6,7 @@ from restaurants.api.restaurant_resource import RestaurantResource
 app = Flask(__name__)
 api = Api(app) # wraps the app with the flask_restful Api class
 
-api.add_resource(RestaurantResource, "/restaurants")
+api.add_resource(RestaurantResource, "/restaurants", "/restaurants/<int:restaurant_id>")
 
 @app.route("/")
 def hello():
