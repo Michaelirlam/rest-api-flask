@@ -1,5 +1,4 @@
 from flask_restful import Resource, reqparse
-from restaurants.api.data_store import restaurants
 from restaurants.db.models import Restaurant
 from restaurants.db.schemas import restaurant_schema, restaurants_schema
 from restaurants.db import db
@@ -34,7 +33,7 @@ class RestaurantResource(Resource):
         for key, value in args.items():
             setattr(restaurant, key, value)
         db.session.commit()
-        return restaurant_schema.dump(restaurant)
+        return restaurant_schema.dump(restaurant), 200
 
 
     def delete(self, restaurant_id):
@@ -42,4 +41,4 @@ class RestaurantResource(Resource):
         deleted_data = restaurant_schema.dump(restaurant)
         db.session.delete(restaurant)
         db.session.commit()
-        return {"message": "Restaurant deleted.", "restaurant":{deleted_data}}, 200
+        return {"message": "Restaurant deleted.", "restaurant": deleted_data}, 200

@@ -1,4 +1,4 @@
-from db.models import Restaurant, Review
+from restaurants.db.models import Restaurant, Review
 from flask_marshmallow import Marshmallow
 
 ma = Marshmallow()
