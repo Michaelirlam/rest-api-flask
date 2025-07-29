@@ -1,4 +1,4 @@
-from flask_restful import Resource, reqparse
+from flask_restful import Resource, reqparse, abort
 from restaurants.db.models import Restaurant
 from restaurants.db.schemas import restaurant_schema, restaurants_schema
 from restaurants.db import db
@@ -12,12 +12,14 @@ class RestaurantResource(Resource):
         """Gets restaurant if restaurant_id is provided, else gets all restaurants"""
         if restaurant_id:
             # Query restaurant and return if found else return a 404 status code
-            restaurant = Restaurant.query.get_or_404(restaurant_id)
-            return restaurant_schema.dump(restaurant)
+            restaurant = Restaurant.query.get(restaurant_id)
+            if not restaurant:
+                abort(404, message="Restaurant not found.")
+            return restaurant_schema.dump(restaurant), 200
         # Query all restaurants
         all_restaurants = Restaurant.query.all()
-        return restaurants_schema.dump(all_restaurants)
-    
+        return restaurants_schema.dump(all_restaurants), 200
+ 
     def post(self):
         """Creates new restaurant"""
         args =  RestaurantResource.parser.parse_args()
@@ -29,7 +31,9 @@ class RestaurantResource(Resource):
     
     def put(self, restaurant_id):
         args = RestaurantResource.parser.parse_args()
-        restaurant = Restaurant.query.get_or_404(restaurant_id)
+        restaurant = Restaurant.query.get(restaurant_id)
+        if not restaurant:
+            abort(404, message="Restaurant not found.")
         for key, value in args.items():
             setattr(restaurant, key, value)
         db.session.commit()
@@ -37,7 +41,9 @@ class RestaurantResource(Resource):
 
 
     def delete(self, restaurant_id):
-        restaurant = Restaurant.query.get_or_404(restaurant_id)
+        restaurant = Restaurant.query.get(restaurant_id)
+        if not restaurant:
+            abort(404, message="Restaurant not found.")
         deleted_data = restaurant_schema.dump(restaurant)
         db.session.delete(restaurant)
         db.session.commit()
