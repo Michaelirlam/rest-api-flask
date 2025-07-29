@@ -3,7 +3,7 @@ from flask_restful import Api
 from restaurants.api.restaurant_resource import RestaurantResource
 from restaurants.api.review_resource import ReviewResource
 from restaurants.db import init_db, init_ma
-
+from flasgger import Swagger
 
 # Initialise the Flask app
 app = Flask(__name__)
@@ -12,6 +12,9 @@ api = Api(app) # wraps the app with the flask_restful Api class
 app.config.setdefault("SQLALCHEMY_DATABASE_URI", "sqlite:///restaurants.db")
 db = init_db(app)
 ma = init_ma(app)
+
+# Initialise Flassger
+swagger = Swagger(app)
 
 # Creates blueprint for version 1 of the REST API 
 v1_bp = Blueprint("api_v1", __name__, url_prefix="/api/v1")
